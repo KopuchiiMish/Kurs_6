@@ -1,7 +1,7 @@
 from django import forms
 
 from mailings.models import Mailing
-
+from customers.models import Customer
 
 class MailingCreateForm(forms.ModelForm):
 
@@ -12,4 +12,4 @@ class MailingCreateForm(forms.ModelForm):
 
     class Meta:
         model = Mailing
-        fields = ['subject', 'body', 'customer']
+        fields = ['subject', 'body', 'customers']
