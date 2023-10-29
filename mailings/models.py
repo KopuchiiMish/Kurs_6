@@ -23,7 +23,7 @@ class Mailing(models.Model):
     subject = models.TextField(verbose_name='Тема рассылки')
     body = models.TextField(verbose_name='Содержание рассылки')
     customers = models.ManyToManyField(Customer, verbose_name='Клиенты')
-    owner = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.subject}'
