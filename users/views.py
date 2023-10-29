@@ -116,7 +116,7 @@ class UserProfileView(LoginRequiredMixin, ListView):
         return context_data
 
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     success_url = reverse_lazy('users:profile')
     extra_context = {'title': 'Профиль'}

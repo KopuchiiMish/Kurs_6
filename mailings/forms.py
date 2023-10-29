@@ -1,7 +1,7 @@
 from django import forms
 
 from mailings.models import Mailing
-from customers.models import Customer
+
 
 class MailingCreateForm(forms.ModelForm):
 
