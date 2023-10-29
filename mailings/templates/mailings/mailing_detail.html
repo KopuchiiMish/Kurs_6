@@ -16,5 +16,16 @@
                     {{ customer.email }}
                     </p>
                 {% endfor %}
+                    Настройки:
+            <p>
+                <b>Дата начала рассылки: </b>{{ object.start_time }}
+            </p>
+            <p>
+                <b>Периодичность: </b>{{ object.get_interval_display }}
+            </p>
+            <p>
+                <b>Статус: </b>{{ object.get_status_display }}
+            </p>
+
         </div>
 {% endblock %}

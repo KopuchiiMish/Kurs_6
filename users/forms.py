@@ -12,6 +12,9 @@ class CustomAuthenticationForm(AuthenticationForm):
 
 
 class UserForm(UserCreationForm):
+    """
+    Форма регистрации пользователя
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,6 +33,9 @@ class UserForm(UserCreationForm):
 
 
 class UserProfileForm(UserChangeForm):
+    """
+    Форма обновления данных пользователя
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,3 +51,28 @@ class UserProfileForm(UserChangeForm):
             'last_name',
         )
         exclude = ('password',)
+
+
+class UserManagerForm(UserProfileForm):
+    """
+    Форма настройки активации пользователя для менеджера
+    """
+    email = forms.CharField(disabled=True, label="Email")
+    first_name = forms.CharField(disabled=True, label="Имя")
+    last_name = forms.CharField(disabled=True, label="Фамилия")
+
+    class Meta:
+        model = User
+
+        exclude = (
+            'last_login',
+            'is_superuser',
+            'groups',
+            'user_permissions',
+            'is_staff',
+            'date_joined',
+            'verification_code',
+            'password',
+            'password1',
+            'password2',
+        )

@@ -1,7 +1,22 @@
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-def index(request):
-    context = {
+from django.views.generic import ListView, TemplateView
+
+from customers.models import Customer
+from mailings.models import Mailing
+
+
+class IndexView(LoginRequiredMixin, TemplateView):
+    login_url = 'users:login'
+    template_name = 'index.html'
+    extra_context = {
         'title': 'Главная страница'
     }
-    return render(request, 'index.html', context)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['mailing_count'] = Mailing.objects.all().count()
+        context['enabled_mailing'] = Mailing.objects.filter(status='enabled').count()
+        # context['unique_users'] = Mailing.objects
+        # print(Customer.mailing_set.all())
+        return context
