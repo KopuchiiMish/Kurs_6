@@ -47,10 +47,20 @@ class RegisterView(CreateView):
         try:
             send_verification_link(activation_url, user.email)
             user.save()
+            return redirect('users:verification_link_sent')
         except SMTPException as e:
-            pass
+            user.delete()
+            print(e)
+            return redirect('users:sending_error')
 
-        return redirect('users:verification_link_sent')
+
+class EmailSendingError(TemplateView):
+    template_name = 'users/email_sending_failed.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Ошибка'
+        return context
 
 
 class UserConfirmEmailView(View):
