@@ -131,7 +131,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = 'index'
-LOGOUT_REDIRECT_URL = ''
+LOGOUT_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -141,3 +141,14 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = os.getenv('YANDEX_MAIL_USER')
 EMAIL_HOST_PASSWORD = os.getenv('YANDEX_MAIL_PASSWORD')
 EMAIL_USE_SSL = True
+
+CACHE_ENABLED = os.getenv('CACHE_ENABLED') == '1'
+
+if CACHE_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.getenv('CACHE_LOCATION'),
+            "TIMEOUT": 60,
+        }
+    }

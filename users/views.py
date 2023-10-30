@@ -21,19 +21,22 @@ class LoginView(BaseLoginView):
 
 
 class LogoutView(BaseLogoutView):
-    pass
+    template_name = 'users/login.html'
 
 
 class RegisterView(CreateView):
     """
-    Контроллер решистрации пользователя
+    Контроллер регистрации пользователя
     """
     model = User
     form_class = UserForm
     success_url = reverse_lazy('users:login')
     template_name = 'users/register.html'
+    extra_context = {
+        'title': 'Регистрация'}
 
     def form_valid(self, form):
+        """Метод получения данных формы"""
         generated_code = code_generator(6)
         user = form.save()
         user.is_active = False
@@ -57,17 +60,18 @@ class RegisterView(CreateView):
 
 
 class EmailSendingError(TemplateView):
+    """Контроллер вывода страницы в случае неудачной отправки письма"""
     template_name = 'users/email_sending_failed.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Ошибка'
-        return context
+    extra_context = {
+        'title': 'Ошибка'}
 
 
 class UserConfirmEmailView(View):
+    """Контроллер подтверждения регистрации по ссылке"""
 
     def get(self, request, verification_code):
+        """Метод проверки валидность ссылки потдверждения регистрации"""
         uid = int(verification_code[6:])
         code = verification_code[:6]
         try:
@@ -85,43 +89,39 @@ class UserConfirmEmailView(View):
 
 
 class EmailConfirmationSentView(TemplateView):
+    """Контроллер вывода страницы уведомления об отправке письма"""
     template_name = 'users/verification_link_sent.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Подтверждение почты'
-        return context
+    extra_context = {
+        'title': 'Подтверждение почты'}
 
 
 class EmailConfirmedView(TemplateView):
+    """Контроллер вывода страницы подтверждения регистрации"""
     template_name = 'users/email_verified.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Подтверждение почты'
-        return context
+    extra_context = {
+        'title': 'Подтверждение почты'}
 
 
 class EmailConfirmationFailedView(TemplateView):
-    template_name = 'users/verification_failed.html'
+    """Контроллер вывода страницы подтверждения регистрации"""
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Подтверждение почты'
-        return context
+    template_name = 'users/verification_failed.html'
+    extra_context = {
+        'title': 'Подтверждение почты'}
 
 
 class UserProfileView(LoginRequiredMixin, ListView):
+    """Контроллер отображения профиля пользователя"""
     login_url = 'users:login'
 
+    template_name = 'users/profile.html'
     model = User
     extra_context = {"title": "Профиль"}
 
-    def get_template_names(self):
-        template_name = 'users/profile.html'
-        return template_name
-
     def get_context_data(self, *args, **kwargs):
+        """Методы передачи в контекст объекта пользователя"""
         context_data = super().get_context_data(*args, **kwargs)
         user = self.request.user
         context_data['user'] = user
@@ -134,7 +134,9 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     """
     model = User
     success_url = reverse_lazy('users:profile')
-    extra_context = {'title': 'Профиль'}
+    extra_context = {
+        'title': 'Профиль'
+    }
     form_class = UserProfileForm
 
     def get_object(self, queryset=None):
@@ -142,6 +144,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class UsersListView(LoginRequiredMixin, ListView):
+    """Контроллер вывода списка всех пользователей для менеджера"""
     login_url = 'users:register'
     redirect_field_name = 'register'
 
@@ -150,12 +153,14 @@ class UsersListView(LoginRequiredMixin, ListView):
     template_name = 'users/users_list.html'
 
     def get_queryset(self):
+        """Метод получения данных из базы"""
         queryset = super().get_queryset()
         if self.request.user.is_staff:
             return queryset
 
 
 class UsersManagerUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    """Контроллер управления пользователями для менеджера (активация/деактивация)"""
     login_url = 'users:register'
     redirect_field_name = 'register'
     template_name = 'users/user_form.html'
@@ -167,6 +172,7 @@ class UsersManagerUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Update
     extra_context = {'title': 'Активация пользователя'}
 
     def has_permission(self):
+        """Метод проверки прав пользователя"""
         object_ = self.get_object()
         user = self.request.user
         if user.is_staff and user.has_perms(self.permission_required):
@@ -175,14 +181,15 @@ class UsersManagerUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Update
             raise PermissionError('Редактировать статус пользователя может только менеджер')
 
     def get_form_class(self):
+        """Метод вывода формы управления пользователем для менеджера"""
         user = self.request.user
         if user.is_staff and user.has_perms(self.permission_required):
             return UserManagerForm
 
     def form_valid(self, form):
+        """Метод получения данных из формы"""
         if form.has_changed():
             user = get_object_or_404(User, id=self.kwargs['pk'])
-            # is_checkbox_checked = form.cleaned_data['is_active']
             if user.is_active:
                 user.is_active = False
             else:
