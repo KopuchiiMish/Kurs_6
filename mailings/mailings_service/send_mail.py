@@ -1,11 +1,9 @@
-import smtplib
-
 from django.core.mail import send_mail
 
 from config import settings
 
 
-def send_mailing(**kwargs):
+def do_send_mail(**kwargs):
     subject = kwargs.get('subject')
     message = kwargs.get('message')
     recipients = kwargs.get('recipients')
