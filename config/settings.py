@@ -24,6 +24,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,6 +37,10 @@ INSTALLED_APPS = [
     'customers',
     'mailings',
     'blog',
+]
+
+CRONJOBS = [
+    ('* * * * *', 'mailings.mailings_service.cron_functions.cron_task'),
 ]
 
 MIDDLEWARE = [
@@ -53,7 +58,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'), ],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,9 +140,9 @@ LOGOUT_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
 
-EMAIL_PORT = 465
 EMAIL_HOST_USER = os.getenv('YANDEX_MAIL_USER')
 EMAIL_HOST_PASSWORD = os.getenv('YANDEX_MAIL_PASSWORD')
 EMAIL_USE_SSL = True

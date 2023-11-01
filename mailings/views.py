@@ -176,7 +176,7 @@ class MailingSettingsUpdateView(LoginRequiredMixin, UpdateView):
             raise PermissionError('Редактировать настройки может только пользователь или менеджер')
 
     def get_form_class(self):
-        """Метод выбора нужной формы для вывода, в зависимости от типа пользователя"""
+        """Метод выбора нужной формы для вывода,в зависимости от типа пользователя"""
         user = self.request.user
         if user.is_staff and user.has_perms(self.permission_required):
             return MailingSettingsManagerUpdateForm

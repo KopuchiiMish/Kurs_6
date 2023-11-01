@@ -4,6 +4,7 @@ from config import settings
 
 
 def do_send_mail(**kwargs):
+
     subject = kwargs.get('subject')
     message = kwargs.get('message')
     recipients = kwargs.get('recipients')
