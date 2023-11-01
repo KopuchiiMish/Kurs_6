@@ -34,7 +34,7 @@ class MailingSettingsUpdateForm(forms.ModelForm):
 
 
 class MailingSettingsManagerUpdateForm(MailingSettingsUpdateForm):
-    """Форма обновления настроек рассылки для менеджера"""
+    """Форма оновления настроек рассылки для менеджера"""
 
     subject = forms.CharField(disabled=True, label="Тема")
     body = forms.CharField(disabled=True, label="Содержание рассылки")

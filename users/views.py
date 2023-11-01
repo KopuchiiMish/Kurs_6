@@ -1,7 +1,6 @@
 from smtplib import SMTPException
 
 from django.conf import settings
-
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
@@ -62,13 +61,12 @@ class RegisterView(CreateView):
 class EmailSendingError(TemplateView):
     """Контроллер вывода страницы в случае неудачной отправки письма"""
     template_name = 'users/email_sending_failed.html'
-
     extra_context = {
         'title': 'Ошибка'}
 
 
 class UserConfirmEmailView(View):
-    """Контроллер подтверждения регистрации по ссылке"""
+    """Контрллер подтверждения регистрации по ссылке"""
 
     def get(self, request, verification_code):
         """Метод проверки валидность ссылки потдверждения регистрации"""
@@ -91,21 +89,19 @@ class UserConfirmEmailView(View):
 class EmailConfirmationSentView(TemplateView):
     """Контроллер вывода страницы уведомления об отправке письма"""
     template_name = 'users/verification_link_sent.html'
-
     extra_context = {
         'title': 'Подтверждение почты'}
 
 
 class EmailConfirmedView(TemplateView):
-    """Контроллер вывода страницы подтверждения регистрации"""
+    """Контроллер вывода страницы подтвреждения регистрации"""
     template_name = 'users/email_verified.html'
-
     extra_context = {
         'title': 'Подтверждение почты'}
 
 
 class EmailConfirmationFailedView(TemplateView):
-    """Контроллер вывода страницы подтверждения регистрации"""
+    """Контроллер вывода страницы подтвреждения регистрации"""
 
     template_name = 'users/verification_failed.html'
     extra_context = {
@@ -115,7 +111,6 @@ class EmailConfirmationFailedView(TemplateView):
 class UserProfileView(LoginRequiredMixin, ListView):
     """Контроллер отображения профиля пользователя"""
     login_url = 'users:login'
-
     template_name = 'users/profile.html'
     model = User
     extra_context = {"title": "Профиль"}

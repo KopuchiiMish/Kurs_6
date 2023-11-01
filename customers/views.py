@@ -36,7 +36,6 @@ class CustomerCreateView(LoginRequiredMixin, CreateView):
             new_customer = form.save()
             new_customer.owner.add(user)
             new_customer.save()
-
             return super().form_valid(form)
 
 
