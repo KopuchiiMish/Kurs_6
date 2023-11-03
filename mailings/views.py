@@ -1,15 +1,15 @@
 import calendar
 from datetime import datetime, timedelta
-
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 import pytz
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
-from mailings.forms import MailingCreateForm, MailingSettingsUpdateForm, MailingSettingsManagerUpdateForm
+from mailings.forms import MailingCreateForm, MailingSettingsUpdateForm, MailingSettingsManagerUpdateForm, MessageForm
 from mailings.mailings_service import send_mail_and_log
-from mailings.models import Mailing, Logs
+from mailings.models import Mailing, Logs, Message
 
 
 class MailingListView(LoginRequiredMixin, ListView):
@@ -37,7 +37,7 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('mailings:list')
 
     def dispatch(self, request, *args, **kwargs):
-        """Метод передадерсации пользователя, если он не прошел аутентификацию"""
+        """Метод переадресации пользователя, если он не прошел аутентификацию"""
         if not request.user.is_authenticated:
             return redirect('users:register')
         else:
@@ -79,14 +79,14 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
                 for customer in customers:
                     new_mailing.customers.add(customer.pk)
                 new_mailing.save()
-                send_mail_and_log(
-                    new_mailing=new_mailing,
-                    current_time=current_time,
-                    customers=customers,
-                    user=form.instance.user,
-                    status=status,
-                    error_message=error_message
-                )
+                # send_mail_and_log(
+                #     new_mailing=new_mailing,
+                #     current_time=current_time,
+                #     customers=customers,
+                #     user=form.instance.user,
+                #     status=status,
+                #     error_message=error_message
+                # )
         return super().form_valid(form)
 
 
@@ -223,14 +223,14 @@ class MailingSettingsUpdateView(LoginRequiredMixin, UpdateView):
                     updated_settings.customers.add(customer.pk)
                 updated_settings.save()
                 form.instance.user = self.request.user
-                send_mail_and_log(
-                    new_mailing=updated_settings,
-                    current_time=current_time,
-                    customers=customers,
-                    user=form.instance.user,
-                    status=status,
-                    error_message=error_message
-                )
+                # send_mail_and_log(
+                #     new_mailing=updated_settings,
+                #     current_time=current_time,
+                #     customers=customers,
+                #     user=form.instance.user,
+                #     status=status,
+                #     error_message=error_message
+                # )
 
         return super().form_valid(form)
 
@@ -252,3 +252,46 @@ class MailingLogsListView(LoginRequiredMixin, ListView):
         else:
             queryset = queryset.all()
         return queryset
+
+
+class MessageCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Message
+    form_class = MessageForm
+    success_url = reverse_lazy('mailings:list')
+
+    def form_valid(self, form):
+        obj: Message = form.save()
+        obj.owner = self.request.user
+        obj.save()
+        return super().form_valid(form)
+
+    def test_func(self):
+        return not self.request.user.is_staff
+
+
+class MessageListView(LoginRequiredMixin, ListView):
+    model = Message
+
+    def get_queryset(self):
+        return Message.objects.filter(owner=self.request.user)
+
+
+class MessageDetailView(LoginRequiredMixin, DetailView):
+    model = Message
+
+
+class MessageUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Message
+    form_class = MessageForm
+    success_url = reverse_lazy('mailings:list')
+
+    def test_func(self):
+        return not self.request.user.is_staff
+
+
+class MessageDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Message
+    success_url = reverse_lazy('mail_list')
+
+    def test_func(self):
+        return not self.request.user.is_staff

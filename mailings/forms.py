@@ -1,6 +1,8 @@
 from django import forms
 
-from mailings.models import Mailing
+from mailings.models import Mailing, Message
+
+from users.forms import MixinForm
 
 
 class MailingCreateForm(forms.ModelForm):
@@ -34,7 +36,7 @@ class MailingSettingsUpdateForm(forms.ModelForm):
 
 
 class MailingSettingsManagerUpdateForm(MailingSettingsUpdateForm):
-    """Форма оновления настроек рассылки для менеджера"""
+    """Форма обновления настроек рассылки для менеджера"""
 
     subject = forms.CharField(disabled=True, label="Тема")
     body = forms.CharField(disabled=True, label="Содержание рассылки")
@@ -43,3 +45,9 @@ class MailingSettingsManagerUpdateForm(MailingSettingsUpdateForm):
     class Meta:
         model = Mailing
         exclude = ('user', 'customers', 'interval', 'next_attempt')
+
+
+class MessageForm(MixinForm, forms.ModelForm):
+    class Meta:
+        model = Message
+        exclude = ('owner',)

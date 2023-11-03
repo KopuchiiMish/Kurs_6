@@ -11,7 +11,7 @@ load_dotenv(BASE_DIR / '.env')
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = "Qwerty123456"
 
 YANDEX_MAIL_USER = os.environ.get("YANDEX_MAIL_USER")
 YANDEX_MAIL_PASSWORD = os.environ.get("YANDEX_MAIL_PASSWORD")
