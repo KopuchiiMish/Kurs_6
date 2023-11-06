@@ -12,9 +12,9 @@ from mailings.models import Mailing
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
-    """Контрлллер вывода главной страницы"""
+    """Контроллер вывода главной страницы"""
     login_url = 'users:login'
-    template_name = 'main/index.html'
+    template_name = 'index.html'
     extra_context = {
         'title': 'Главная страница'
     }

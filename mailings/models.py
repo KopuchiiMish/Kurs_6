@@ -20,9 +20,20 @@ MAILING_PERIOD_CHOICES = (
 )
 
 
-class Mailing(models.Model):
-    subject = models.TextField(verbose_name='Тема рассылки')
+class Message(models.Model):
+    subject = models.TextField(max_length=100, verbose_name='Тема рассылки')
     body = models.TextField(verbose_name='Содержание рассылки')
+
+    def __str__(self):
+        return self.subject
+
+    class Meta:
+        verbose_name = 'Письмо'
+        verbose_name_plural = 'Письма'
+
+
+class Mailing(models.Model):
+    message = models.ForeignKey(Message, verbose_name='Сообщение', on_delete=models.CASCADE, default=None)
     customers = models.ManyToManyField(Customer, verbose_name='Клиенты')
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
 
@@ -35,7 +46,7 @@ class Mailing(models.Model):
     next_attempt = models.DateTimeField(verbose_name='Дата последней отправки', **NULLABLE)
 
     def __str__(self):
-        return f'{self.subject}'
+        return f'{self.message} ({self.start_time})'
 
     class Meta:
         ordering = ["pk"]
@@ -44,7 +55,7 @@ class Mailing(models.Model):
 
 
 class Logs(models.Model):
-    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
     last_attempt_time = models.DateTimeField(verbose_name='Последняя отправка рассылки', auto_now=True)
     status = models.CharField(max_length=6, verbose_name='Статус отправки рассылки')
     mailing = models.ForeignKey(Mailing, verbose_name='Рассылка', on_delete=models.CASCADE)
