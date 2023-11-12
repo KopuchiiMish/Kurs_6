@@ -1,6 +1,6 @@
 import calendar
 from datetime import datetime, timedelta
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 import pytz
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import redirect
@@ -8,7 +8,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
 from mailings.forms import MailingCreateForm, MailingSettingsUpdateForm, MailingSettingsManagerUpdateForm, MessageForm
-from mailings.mailings_service import send_mail_and_log
+
 from mailings.models import Mailing, Logs, Message
 
 
